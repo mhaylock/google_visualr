@@ -234,18 +234,20 @@ module GoogleVisualr
 
       v = value.is_a?(Hash) ? value[:v] : value
 
-      case
-        when type == "string"
-          raise ArgumentError, "cell value '#{v}' is not a String", caller              unless v.is_a?(String)
-        when type == "number"
-          raise ArgumentError, "cell value '#{v}' is not an Integer or a Float", caller unless v.is_a?(Integer)   || v.is_a?(Float)
-        when type == "date"
-          raise ArgumentError, "cell value '#{v}' is not a Date", caller                unless v.is_a?(Date)
-        when type == 'datetime'
-          raise ArgumentError, "cell value '#{v}' is not a DateTime", caller            unless v.is_a?(DateTime)
-        when type == "boolean"
-          raise ArgumentError, "cell value '#{v}' is not a Boolean", caller             unless v.is_a?(TrueClass) || v.is_a?(FalseClass)
-       end
+      unless v.nil?
+        case
+          when type == "string"
+            raise ArgumentError, "cell value '#{v}' is not a String", caller              unless v.is_a?(String)
+          when type == "number"
+            raise ArgumentError, "cell value '#{v}' is not an Integer or a Float", caller unless v.is_a?(Integer)   || v.is_a?(Float)
+          when type == "date"
+            raise ArgumentError, "cell value '#{v}' is not a Date", caller                unless v.is_a?(Date)
+          when type == 'datetime'
+            raise ArgumentError, "cell value '#{v}' is not a DateTime", caller            unless v.is_a?(DateTime)
+          when type == "boolean"
+            raise ArgumentError, "cell value '#{v}' is not a Boolean", caller             unless v.is_a?(TrueClass) || v.is_a?(FalseClass)
+        end
+      end
 
     end
 
@@ -289,6 +291,8 @@ module GoogleVisualr
       def typecast(value)
 
         case
+          when value.nil?
+            return "null"
           when value.is_a?(String)
             return "'#{value.gsub(/[']/, '\\\\\'')}'"
           when value.is_a?(Integer)   || value.is_a?(Float)
