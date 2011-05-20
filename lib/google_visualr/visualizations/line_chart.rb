@@ -38,7 +38,7 @@ module GoogleVisualr
       attr_accessor :legend
       attr_accessor :legendTextStyle
       attr_accessor :lineWidth
-      attr_accessor :pointWidth
+      attr_accessor :pointSize
       attr_accessor :reverseCategories
       attr_accessor :title
       attr_accessor :titlePosition

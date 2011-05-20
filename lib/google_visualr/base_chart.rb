@@ -72,6 +72,20 @@ module GoogleVisualr
     def typecast(value)
 
       case
+        when value.is_a?(Array)
+          cast_values = []
+          value.each do |v|
+            cast_values << "'#{v}'" if v.is_a?(String)
+            cast_values << "#{v}" if v.is_a?(Integer) || v.is_a?(Float)
+          end
+          return "[#{cast_values.join(', ')}]"
+        when value.is_a?(Hash)
+          cast_hash = []
+          value.each do |k, v|
+            cast_hash << "#{k}:'#{v}'" if v.is_a?(String)
+            cast_hash << "#{k}:#{v}" if v.is_a?(Integer) || v.is_a?(Float)
+          end
+          return "{#{cast_hash.join(', ')}}"
         when value.is_a?(String)
           return "'#{value.gsub(/[']/, '\\\\\'')}'"
         when value.is_a?(Integer)   || value.is_a?(Float)
