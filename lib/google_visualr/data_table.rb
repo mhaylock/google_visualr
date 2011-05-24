@@ -126,6 +126,13 @@ module GoogleVisualr
       row_values.each_with_index do |row_value, column_index|
         set_cell( row_index, column_index, row_value )
       end
+      
+      if @cols.size > row_values.size
+        # fill remaining cells with blank values
+        (row_values.size...@cols.size).each do |column_index|
+          set_cell( row_index, column_index, { :v => nil, :p => row_values.last[:p] })
+        end
+      end
 
     end
 
@@ -162,7 +169,7 @@ module GoogleVisualr
     def set_cell(row_index, column_index, value)
 
       if within_range?( row_index, column_index )
-
+        
         verify_against_column_type( @cols[column_index][:type], value )
 
         @rows[row_index][column_index] = GoogleVisualr::DataTable::Cell.new(value)
@@ -272,8 +279,8 @@ module GoogleVisualr
       def to_js
         js  = "{"
         js += "v: #{typecast(@v)}"
-        js += ", f: #{@f}" unless @f.nil?
-        js += ", p: #{@p}" unless @p.nil?
+        js += ", f: #{typecast(@f)}" unless @f.nil?
+        js += ", p: #{typecast(@p)}" unless @p.nil?
         js += "}"
         js
       end
@@ -291,6 +298,13 @@ module GoogleVisualr
         case
           when value.nil?
             return "null"
+          when value.is_a?(Hash)
+            cast_hash = []
+            value.each do |k, v|
+              cast_hash << "#{k}:'#{v}'" if v.is_a?(String)
+              cast_hash << "#{k}:#{v}" if v.is_a?(Integer) || v.is_a?(Float)
+            end
+            return "{#{cast_hash.join(', ')}}"
           when value.is_a?(String)
             return "'#{value.gsub(/[']/, '\\\\\'')}'"
           when value.is_a?(Integer)   || value.is_a?(Float)

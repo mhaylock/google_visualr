@@ -5,6 +5,7 @@ module GoogleVisualr
 
     attr_accessor :data_table
     attr_accessor :formatters
+    attr_accessor :ready_function
 
 
     def initialize(data_table, options={})
@@ -54,6 +55,11 @@ module GoogleVisualr
 
       js << "\n    var chart = new google.visualization.#{class_name}(document.getElementById('#{element_id}'));"
       js << "\n    chart.draw(chart_data, #{collect_parameters});"
+      
+      if @ready_function
+        js << "\n    google.visualization.events.addListener(chart, 'ready', #{@ready_function});"
+      end
+      
       js << "\n  }});"
       js << "\n</script>"
 
